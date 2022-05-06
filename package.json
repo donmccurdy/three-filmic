@@ -15,10 +15,9 @@
     "dev": "concurrently \"yarn watch:debug\" \"snowpack dev --config snowpack.config.cjs\"",
     "test": "ts-node node_modules/tape/bin/tape test/*.ts | tap-spec",
     "coverage": "nyc --reporter=lcov --reporter=text ts-node node_modules/tape/bin/tape test/*.ts",
-    "coverage:report": "nyc report --reporter=text-lcov | coveralls",
     "preversion": "yarn dist && yarn test",
     "version": "yarn dist && git add -u",
-    "postversion": "git push && git push --tags && npm publish && yarn coverage:report"
+    "postversion": "git push && git push --tags && npm publish"
   },
   "dependencies": {
     "@types/three": "^0.136.x",
@@ -29,7 +28,6 @@
     "@types/tape": "^4.13.0",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "concurrently": "^7.1.0",
-    "coveralls": "^3.1.0",
     "eslint": "^7.24.0",
     "lil-gui": "^0.16.1",
     "microbundle": "^0.13.0",
