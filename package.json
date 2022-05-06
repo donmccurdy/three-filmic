@@ -1,6 +1,6 @@
 {
   "name": "three-filmic",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Film emulsion-like rendering transforms for three.js, based on filmic-blender",
   "main": "dist/three-filmic.js",
   "module": "dist/three-filmic.modern.js",
