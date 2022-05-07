@@ -20,6 +20,7 @@ export interface LookLUTTextures {
 	[Look.VERY_LOW_CONTRAST]?: DataTexture,
 }
 
+// TODO(docs): API documentation.
 export class FilmicPass extends EffectPass {
 	private _view: View = DEFAULT_VIEW;
 	private _look: Look = DEFAULT_LOOK;
@@ -53,6 +54,7 @@ export class FilmicPass extends EffectPass {
 		this._look = look;
 	}
 
+	// TODO(docs): Document units of exposure.
 	get exposure(): number {
 		return this._exposureTransform.exposure;
 	}
@@ -79,6 +81,7 @@ export class FilmicPass extends EffectPass {
 
 	// TODO(cleanup): Do without a build method?
 	build() {
+		// Remove current filmic transform.
 		this.effects.length = this._prevEffects.length;
 
 		this.effects.push(this._exposureTransform);
@@ -99,26 +102,16 @@ export class FilmicPass extends EffectPass {
 			);
 
 			// # Look Transform
-			// !<FileTransform> {src: filmic_to_0-70_1-03.spi1d, interpolation: linear}
-			// {#if LOOK != Look.MEDIUM_CONTRAST}
-			//   !<FileTransform> {src: filmic_to_0-???????.spi1d, interpolation: linear}
-			//   !<FileTransform> {src: filmic_to_0-70_1-03.spi1d, interpolation: linear, direction: inverse}
-			// {#endif
-			// TODO(bug): This line isn't in the right place, I think.
-			// this.effects.push(
-			// 	new LUT1DEffect(this._lookLUTs[this._look]!),
-			// );
+			if (this._view === View.FILMIC
+				|| this._view === View.GRAYSCALE
+				|| this._view === View.FALSE_COLOR) {
+				this.effects.push(
+					new LUT1DEffect(this._lookLUTs[this._look]!),
+				);
+			}
 
 			// # View Transform
-			if (this._view === View.FILMIC) {
-				this.effects.push(
-					new AllocationTransform({
-						allocation: Allocation.LG2,
-						domain: new Vector2(-12.473931188, 4.026068812),
-						inverse: true,
-					}),
-				);
-			} else if (this._view === View.FALSE_COLOR) {
+			if (this._view === View.FALSE_COLOR) {
 				this.effects.push(
 					new MatrixTransform(new Matrix4().fromArray([
 						0.2126729, 0.7151521, 0.0721750, 0,
@@ -128,9 +121,19 @@ export class FilmicPass extends EffectPass {
 					])),
 					new LUTEffect(this._viewLUTs[View.FALSE_COLOR]!),
 				);
+			} else if (this._view === View.GRAYSCALE) {
+				this.effects.push(
+					new MatrixTransform(new Matrix4().fromArray([
+						0.2126729, 0.7151521, 0.0721750, 0,
+						0.2126729, 0.7151521, 0.0721750, 0,
+						0.2126729, 0.7151521, 0.0721750, 0,
+						0, 0, 0, 1
+					])),
+				);
 			}
-
 		}
+
+		this.fullscreenMaterial.encodeOutput = this._view === View.NONE;
 
 		if (this.renderer) this.recompile();
 	}

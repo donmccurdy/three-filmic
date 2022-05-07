@@ -40,9 +40,6 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 
 	set lut(lut: DataTexture) {
 		this.uniforms.get(Uniforms.LUT)!.value = lut;
-		// TODO(test): Neither should be necessary.
-		lut.needsUpdate = true;
-		lut.flipY = false;
 		this.setChanged();
 	}
 }

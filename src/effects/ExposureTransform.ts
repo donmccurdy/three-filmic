@@ -9,7 +9,7 @@ uniform float ${Uniforms.EXPOSURE};
 void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor) {
 
 	// TODO(test): Multiply, or 2^exposure?
-	outputColor = vec4(inputColor.rgb * ${Uniforms.EXPOSURE}, inputColor.a);
+	outputColor = vec4(inputColor.rgb * pow(2.0, ${Uniforms.EXPOSURE}), inputColor.a);
 
 }
 	`.trim();

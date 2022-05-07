@@ -6,6 +6,7 @@ export enum View {
 	FILMIC = 5001,
 	FILMIC_LOG = 5002,
 	FALSE_COLOR = 5003,
+	GRAYSCALE = 5004,
 }
 
 export enum Look {
@@ -26,7 +27,7 @@ export enum Allocation {
 
 export const DEFAULT_VIEW = View.FILMIC;
 export const DEFAULT_LOOK = Look.MEDIUM_CONTRAST;
-export const DEFAULT_EXPOSURE = 1;
+export const DEFAULT_EXPOSURE = 0;
 
 export enum Defines {
 	ENABLED = 'FILMIC_ENABLED',

@@ -5,12 +5,14 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { GUI } from 'lil-gui';
 import { EffectComposer, LUTCubeLoader, RenderPass } from 'postprocessing';
 import { FilmicPass, View, Look, LUT1DCubeLoader } from '../dist/three-filmic.modern.js';
+import { NoToneMapping, sRGBEncoding } from 'three';
 
 const VIEW_OPTIONS = {
 	NONE: View.NONE,
 	FILMIC: View.FILMIC,
 	FILMIC_LOG: View.FILMIC_LOG,
 	FALSE_COLOR: View.FALSE_COLOR,
+	GRAYSCALE: View.GRAYSCALE,
 };
 
 const LOOK_OPTIONS = {
@@ -27,7 +29,7 @@ const params = {
 	enabled: true,
 	view: 'FILMIC',
 	look: 'MEDIUM_CONTRAST',
-	exposure: 1,
+	exposure: 0,
 };
 
 let gui;
@@ -67,6 +69,9 @@ async function init() {
 		} );
 
 	renderer = new THREE.WebGLRenderer();
+	renderer.physicallyCorrectLights = true;
+	renderer.outputEncoding = sRGBEncoding;
+	renderer.toneMapping = NoToneMapping;
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.appendChild( renderer.domElement );
@@ -105,7 +110,7 @@ async function init() {
 	gui.add( params, 'enabled' ).onChange(() => (filmicPass.enabled = params.enabled));
 	gui.add( params, 'view', Object.keys( VIEW_OPTIONS ) ).onChange(() => (filmicPass.view = (View as any)[params.view]));
 	gui.add( params, 'look', Object.keys( LOOK_OPTIONS ) ).onChange(() => (filmicPass.look = (Look as any)[params.look]));
-	gui.add( params, 'exposure' ).min( 0 ).max( 10 ).onChange(() => (filmicPass.exposure = params.exposure));
+	gui.add( params, 'exposure' ).min( -10 ).max( 10 ).onChange(() => (filmicPass.exposure = params.exposure));
 
 	// TODO(cleanup): Do without a build method?
 	gui.onChange((obj) => {
