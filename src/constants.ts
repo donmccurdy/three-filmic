@@ -26,7 +26,6 @@ export enum Allocation {
 }
 
 export const DEFAULT_VIEW = View.FILMIC;
-export const DEFAULT_LOOK = Look.MEDIUM_CONTRAST;
 export const DEFAULT_EXPOSURE = 0;
 
 export enum Defines {

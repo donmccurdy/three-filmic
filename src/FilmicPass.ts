@@ -1,32 +1,15 @@
 import { Camera, DataTexture, DataTexture3D, Matrix4, Vector2 } from 'three';
-import { Effect, EffectPass, LUTEffect } from 'postprocessing';
-import { View, Look, DEFAULT_VIEW, DEFAULT_LOOK, Allocation, } from './constants';
+import { Effect, EffectPass, LookupTexture, LUTEffect } from 'postprocessing';
+import { View, DEFAULT_VIEW, Allocation, NEUTRAL_LUT_3D, NEUTRAL_LUT_1D } from './constants';
 import { AllocationTransform, ExposureTransform, MatrixTransform, LUT1DEffect } from './effects';
-
-export interface ViewLUTTextures {
-	[View.NONE]?: null,
-	[View.FILMIC]?: DataTexture3D,
-	[View.FILMIC_LOG]?: DataTexture3D,
-	[View.FALSE_COLOR]?: DataTexture3D,
-}
-
-export interface LookLUTTextures {
-	[Look.VERY_HIGH_CONTRAST]?: DataTexture,
-	[Look.HIGH_CONTRAST]?: DataTexture,
-	[Look.MEDIUM_HIGH_CONTRAST]?: DataTexture,
-	[Look.MEDIUM_CONTRAST]?: DataTexture,
-	[Look.MEDIUM_LOW_CONTRAST]?: DataTexture,
-	[Look.LOW_CONTRAST]?: DataTexture,
-	[Look.VERY_LOW_CONTRAST]?: DataTexture,
-}
 
 // TODO(docs): API documentation.
 export class FilmicPass extends EffectPass {
 	private _view: View = DEFAULT_VIEW;
-	private _look: Look = DEFAULT_LOOK;
 
-	private _viewLUTs: ViewLUTTextures = {};
-	private _lookLUTs: LookLUTTextures = {};
+	private _filmicLUT: DataTexture3D | LookupTexture = NEUTRAL_LUT_3D;
+	private _falseColorLUT: DataTexture3D | LookupTexture = NEUTRAL_LUT_3D;
+	private _lookLUT: DataTexture = NEUTRAL_LUT_1D;
 
 	private _prevEffects: Effect[];
 
@@ -38,6 +21,10 @@ export class FilmicPass extends EffectPass {
 		this._exposureTransform = new ExposureTransform();
 	}
 
+	/**************************************************************************
+	 * Configuration.
+	 */
+
 	get view(): View {
 		return this._view;
 	}
@@ -46,15 +33,6 @@ export class FilmicPass extends EffectPass {
 		this._view = view;
 	}
 
-	get look(): Look {
-		return this._look;
-	}
-
-	set look(look: Look) {
-		this._look = look;
-	}
-
-	// TODO(docs): Document units of exposure.
 	get exposure(): number {
 		return this._exposureTransform.exposure;
 	}
@@ -63,21 +41,37 @@ export class FilmicPass extends EffectPass {
 		this._exposureTransform.exposure = exposure;
 	}
 
-	get viewLUTs(): ViewLUTTextures {
-		return this._viewLUTs;
+	/**************************************************************************
+	 * LUTs.
+	 */
+
+	get filmicLUT(): DataTexture3D | LookupTexture {
+		return this._filmicLUT;
 	}
 
-	set viewLUTs(luts: ViewLUTTextures) {
-		this._viewLUTs = {...this._viewLUTs, ...luts};
+	set filmicLUT(lut: DataTexture3D | LookupTexture) {
+		this._filmicLUT = lut;
 	}
 
-	get lookLUTs(): LookLUTTextures {
-		return this._lookLUTs;
+	get falseColorLUT(): DataTexture3D | LookupTexture {
+		return this._falseColorLUT;
 	}
 
-	set lookLUTs(luts: LookLUTTextures) {
-		this._lookLUTs = {...this._lookLUTs, ...luts};
+	set falseColorLUT(lut: DataTexture3D | LookupTexture) {
+		this._falseColorLUT = lut;
 	}
+
+	get lookLUT(): DataTexture {
+		return this._lookLUT;
+	}
+
+	set lookLUT(lut: DataTexture) {
+		this._lookLUT = lut;
+	}
+
+	/**************************************************************************
+	 * Internal.
+	 */
 
 	// TODO(cleanup): Do without a build method?
 	build() {
@@ -94,7 +88,7 @@ export class FilmicPass extends EffectPass {
 					allocation: Allocation.LG2,
 					domain: new Vector2(-12.473931188, 12.526068812)
 				}),
-				new LUTEffect(this._viewLUTs[View.FILMIC]!),
+				new LUTEffect(this.filmicLUT),
 				new AllocationTransform({
 					allocation: Allocation.UNIFORM,
 					domain: new Vector2(0, 0.66)
@@ -106,7 +100,7 @@ export class FilmicPass extends EffectPass {
 				|| this._view === View.GRAYSCALE
 				|| this._view === View.FALSE_COLOR) {
 				this.effects.push(
-					new LUT1DEffect(this._lookLUTs[this._look]!),
+					new LUT1DEffect(this._lookLUT),
 				);
 			}
 
@@ -119,7 +113,7 @@ export class FilmicPass extends EffectPass {
 						0.2126729, 0.7151521, 0.0721750, 0,
 						0, 0, 0, 1
 					])),
-					new LUTEffect(this._viewLUTs[View.FALSE_COLOR]!),
+					new LUTEffect(this._falseColorLUT),
 				);
 			} else if (this._view === View.GRAYSCALE) {
 				this.effects.push(

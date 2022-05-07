@@ -7,23 +7,8 @@ import { EffectComposer, LUTCubeLoader, RenderPass } from 'postprocessing';
 import { FilmicPass, View, Look, LUT1DCubeLoader } from '../dist/three-filmic.modern.js';
 import { NoToneMapping, sRGBEncoding } from 'three';
 
-const VIEW_OPTIONS = {
-	NONE: View.NONE,
-	FILMIC: View.FILMIC,
-	FILMIC_LOG: View.FILMIC_LOG,
-	FALSE_COLOR: View.FALSE_COLOR,
-	GRAYSCALE: View.GRAYSCALE,
-};
-
-const LOOK_OPTIONS = {
-	VERY_HIGH_CONTRAST: Look.VERY_HIGH_CONTRAST,
-	HIGH_CONTRAST: Look.HIGH_CONTRAST,
-	MEDIUM_HIGH_CONTRAST: Look.MEDIUM_HIGH_CONTRAST,
-	MEDIUM_CONTRAST: Look.MEDIUM_CONTRAST,
-	MEDIUM_LOW_CONTRAST: Look.MEDIUM_LOW_CONTRAST,
-	LOW_CONTRAST: Look.LOW_CONTRAST,
-	VERY_LOW_CONTRAST: Look.VERY_LOW_CONTRAST,
-}
+const lut3DLoader = new LUTCubeLoader();
+const lut1DLoader = new LUT1DCubeLoader();
 
 const params = {
 	enabled: true,
@@ -31,6 +16,24 @@ const params = {
 	look: 'MEDIUM_CONTRAST',
 	exposure: 0,
 };
+
+const VIEW_OPTIONS: Record<View, View> = {
+	NONE: View.NONE,
+	FILMIC: View.FILMIC,
+	FILMIC_LOG: View.FILMIC_LOG,
+	FALSE_COLOR: View.FALSE_COLOR,
+	GRAYSCALE: View.GRAYSCALE,
+};
+
+const LOOK_OPTIONS: Record<Look, string> = {
+	VERY_HIGH_CONTRAST: '/assets/luts/Filmic_to_1.20_1-00.cube',
+	HIGH_CONTRAST: '/assets/luts/Filmic_to_0.99_1-0075.cube',
+	MEDIUM_HIGH_CONTRAST: '/assets/luts/Filmic_to_0-85_1-011.cube',
+	MEDIUM_CONTRAST: '/assets/luts/Filmic_to_0-70_1-03.cube',
+	MEDIUM_LOW_CONTRAST: '/assets/luts/Filmic_to_0-60_1-04.cube',
+	LOW_CONTRAST: '/assets/luts/Filmic_to_0-48_1-09.cube',
+	VERY_LOW_CONTRAST: '/assets/luts/Filmic_to_0-35_1-30.cube',
+}
 
 let gui;
 let camera: THREE.PerspectiveCamera, scene: THREE.Scene, renderer: THREE.WebGLRenderer;
@@ -49,24 +52,23 @@ async function init() {
 
 	scene = new THREE.Scene();
 
+	// Model.
+
+	new GLTFLoader()
+		.load( '/assets/DamagedHelmet.glb', (gltf) => {
+			scene.add(gltf.scene);
+		});
+
+	// Environment.
+
 	new RGBELoader()
-		.load( '/assets/royal_esplanade_1k.hdr', function ( texture ) {
-
+		.load('/assets/royal_esplanade_1k.hdr', (texture) => {
 			texture.mapping = THREE.EquirectangularReflectionMapping;
-
 			scene.background = texture;
 			scene.environment = texture;
+		});
 
-			// model
-
-			const loader = new GLTFLoader();
-			loader.load( '/assets/DamagedHelmet.glb', function ( gltf ) {
-
-				scene.add( gltf.scene );
-
-			} );
-
-		} );
+	// Renderer.
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.physicallyCorrectLights = true;
@@ -76,23 +78,12 @@ async function init() {
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	container.appendChild( renderer.domElement );
 
-	const lut3DLoader = new LUTCubeLoader();
-	const lut1DLoader = new LUT1DCubeLoader();
+	// Post-processing.
 
 	filmicPass = new FilmicPass(camera);
-	filmicPass.viewLUTs = {
-		[View.FILMIC]: await lut3DLoader.loadAsync('/assets/luts/desat65cube.cube'),
-		[View.FALSE_COLOR]: await lut3DLoader.loadAsync('/assets/luts/Filmic_False_Colour.cube'),
-	};
-	filmicPass.lookLUTs = {
-		[Look.VERY_HIGH_CONTRAST]: await lut1DLoader.loadAsync('/assets/luts/Filmic_to_1.20_1-00.cube'),
-		[Look.HIGH_CONTRAST]: await lut1DLoader.loadAsync('/assets/luts/Filmic_to_0.99_1-0075.cube'),
-		[Look.MEDIUM_HIGH_CONTRAST]: await lut1DLoader.loadAsync('/assets/luts/Filmic_to_0-85_1-011.cube'),
-		[Look.MEDIUM_CONTRAST]: await lut1DLoader.loadAsync('/assets/luts/Filmic_to_0-70_1-03.cube'),
-		[Look.MEDIUM_LOW_CONTRAST]: await lut1DLoader.loadAsync('/assets/luts/Filmic_to_0-60_1-04.cube'),
-		[Look.LOW_CONTRAST]: await lut1DLoader.loadAsync('/assets/luts/Filmic_to_0-48_1-09.cube'),
-		[Look.VERY_LOW_CONTRAST]: await lut1DLoader.loadAsync('/assets/luts/Filmic_to_0-35_1-30.cube'),
-	};
+	filmicPass.filmicLUT = await lut3DLoader.loadAsync('/assets/luts/desat65cube.cube');
+	filmicPass.falseColorLUT = await lut3DLoader.loadAsync('/assets/luts/Filmic_False_Colour.cube');
+	filmicPass.lookLUT = await lut1DLoader.loadAsync(LOOK_OPTIONS[params.look]);
 	filmicPass.build();
 
 	composer = new EffectComposer(renderer, { frameBufferType: THREE.HalfFloatType });
@@ -100,25 +91,31 @@ async function init() {
 	composer.addPass(new RenderPass(scene, camera));
 	composer.addPass(filmicPass);
 
+	// Controls.
+
 	const controls = new OrbitControls(camera, renderer.domElement);
 	controls.minDistance = 2;
 	controls.maxDistance = 10;
 	controls.target.set( 0, 0, - 0.2 );
 	controls.update();
 
-	gui = new GUI({width: 300});
-	gui.add( params, 'enabled' ).onChange(() => (filmicPass.enabled = params.enabled));
-	gui.add( params, 'view', Object.keys( VIEW_OPTIONS ) ).onChange(() => (filmicPass.view = (View as any)[params.view]));
-	gui.add( params, 'look', Object.keys( LOOK_OPTIONS ) ).onChange(() => (filmicPass.look = (Look as any)[params.look]));
-	gui.add( params, 'exposure' ).min( -10 ).max( 10 ).onChange(() => (filmicPass.exposure = params.exposure));
+	// GUI.
 
-	// TODO(cleanup): Do without a build method?
-	gui.onChange((obj) => {
-		setTimeout(() => {
-			if (obj.property !== 'exposure') {
-				filmicPass.build();
-			}
-		});
+	gui = new GUI({width: 300});
+	gui.add( params, 'enabled' ).onChange(() => {
+		filmicPass.enabled = params.enabled;
+		filmicPass.build();
+	});
+	gui.add( params, 'view', Object.keys( VIEW_OPTIONS ) ).onChange(() => {
+		filmicPass.view = VIEW_OPTIONS[params.view];
+		filmicPass.build();
+	});
+	gui.add( params, 'look', Object.keys( LOOK_OPTIONS ) ).onChange(async () => {
+		filmicPass.lookLUT = await lut1DLoader.loadAsync(LOOK_OPTIONS[params.look]);
+		filmicPass.build();
+	});
+	gui.add( params, 'exposure' ).min( -10 ).max( 10 ).onChange(() => {
+		filmicPass.exposure = params.exposure;
 	});
 
 	window.addEventListener('resize', onWindowResize);
