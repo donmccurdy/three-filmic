@@ -74,7 +74,7 @@ export class FilmicPass extends EffectPass {
 	 */
 
 	// TODO(cleanup): Do without a build method?
-	build() {
+	recompile() {
 		// Remove current filmic transform.
 		this.effects.length = this._prevEffects.length;
 
@@ -129,6 +129,6 @@ export class FilmicPass extends EffectPass {
 
 		this.fullscreenMaterial.encodeOutput = this._view === View.NONE;
 
-		if (this.renderer) this.recompile();
+		if (this.renderer) super.recompile();
 	}
 }

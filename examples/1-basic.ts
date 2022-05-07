@@ -84,7 +84,7 @@ async function init() {
 	filmicPass.filmicLUT = await lut3DLoader.loadAsync('/assets/luts/desat65cube.cube');
 	filmicPass.falseColorLUT = await lut3DLoader.loadAsync('/assets/luts/Filmic_False_Colour.cube');
 	filmicPass.lookLUT = await lut1DLoader.loadAsync(LOOK_OPTIONS[params.look]);
-	filmicPass.build();
+	filmicPass.recompile();
 
 	composer = new EffectComposer(renderer, { frameBufferType: THREE.HalfFloatType });
 	composer.setSize(window.innerWidth, window.innerHeight);
@@ -104,15 +104,15 @@ async function init() {
 	gui = new GUI({width: 300});
 	gui.add( params, 'enabled' ).onChange(() => {
 		filmicPass.enabled = params.enabled;
-		filmicPass.build();
+		filmicPass.recompile();
 	});
 	gui.add( params, 'view', Object.keys( VIEW_OPTIONS ) ).onChange(() => {
 		filmicPass.view = VIEW_OPTIONS[params.view];
-		filmicPass.build();
+		filmicPass.recompile();
 	});
 	gui.add( params, 'look', Object.keys( LOOK_OPTIONS ) ).onChange(async () => {
 		filmicPass.lookLUT = await lut1DLoader.loadAsync(LOOK_OPTIONS[params.look]);
-		filmicPass.build();
+		filmicPass.recompile();
 	});
 	gui.add( params, 'exposure' ).min( -10 ).max( 10 ).onChange(() => {
 		filmicPass.exposure = params.exposure;

@@ -67,12 +67,3 @@ ociobakelut --lut ~/Desktop/filmic-blender-master/looks/Filmic_to_1.20_1-00.spi1
 !<AllocationTransform> {allocation: lg2, vars: [-12.473931188, 4.026068812], direction: inverse}
 
 ```
-
-## Examples
-
-TODO(feat): Include additional examples:
-
-1. basic (basic scene)
-2. advanced (full post-processing stack: bloom, fxaa, dither)
-3. EXR (drag and drop, maybe compare to reference?)
-4. glTF (drag and drop)
