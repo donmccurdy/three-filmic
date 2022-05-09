@@ -1,6 +1,6 @@
 import { BlendFunction, Effect } from 'postprocessing';
 import { Uniform } from 'three';
-import { DEFAULT_EXPOSURE, DEFAULT_VIEW, Defines, Uniforms } from '../constants';
+import { DEFAULT_EXPOSURE, Uniforms } from '../constants';
 
 export class ExposureTransform extends Effect {
 	static readonly FRAG = `

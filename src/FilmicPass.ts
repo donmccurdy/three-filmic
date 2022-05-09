@@ -84,7 +84,6 @@ export class FilmicPass extends EffectPass {
 		this.effects.push(this._exposureTransform);
 
 		if (this._view !== View.NONE) {
-
 			// 2. Scene Linear to Filmic Log
 			this.effects.push(
 				new AllocationTransform({
@@ -95,25 +94,23 @@ export class FilmicPass extends EffectPass {
 				new AllocationTransform({
 					allocation: Allocation.UNIFORM,
 					domain: new Vector2(0, 0.66),
-				}),
+				})
 			);
 
 			// 3. Look Transform
-			if (this._view === View.FILMIC
-				|| this._view === View.GRAYSCALE) {
+			if (this._view === View.FILMIC || this._view === View.GRAYSCALE) {
 				this.effects.push(new LUT1DEffect(this._lookLUT));
 			}
 
 			// 4. View Transform
-			if (this._view === View.GRAYSCALE
-				|| this._view === View.FALSE_COLOR) {
+			if (this._view === View.GRAYSCALE || this._view === View.FALSE_COLOR) {
 				this.effects.push(
-					new MatrixTransform(new Matrix4().fromArray([
-						0.2126729, 0.7151521, 0.0721750, 0,
-						0.2126729, 0.7151521, 0.0721750, 0,
-						0.2126729, 0.7151521, 0.0721750, 0,
-						0, 0, 0, 1
-					])),
+					new MatrixTransform(
+						new Matrix4().fromArray([
+							0.2126729, 0.7151521, 0.072175, 0, 0.2126729, 0.7151521, 0.072175, 0, 0.2126729, 0.7151521,
+							0.072175, 0, 0, 0, 0, 1,
+						])
+					)
 				);
 			}
 			if (this._view === View.FALSE_COLOR) {

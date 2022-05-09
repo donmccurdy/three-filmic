@@ -44,13 +44,18 @@ export enum Uniforms {
 	RANGE = 'range',
 }
 
-export const NEUTRAL_LUT_1D = new DataTexture(new Float32Array([
-	0,
-	0.25,
-	0.5,
-	0.75,
+export const NEUTRAL_LUT_1D = new DataTexture(
+	new Float32Array([0, 0.25, 0.5, 0.75, 1]),
+	5,
 	1,
-]), 5, 1, RedFormat, FloatType, UVMapping, ClampToEdgeWrapping, ClampToEdgeWrapping, LinearFilter, LinearFilter);
+	RedFormat,
+	FloatType,
+	UVMapping,
+	ClampToEdgeWrapping,
+	ClampToEdgeWrapping,
+	LinearFilter,
+	LinearFilter
+);
 NEUTRAL_LUT_1D.name = 'neutral1D';
 NEUTRAL_LUT_1D.needsUpdate = true;
 

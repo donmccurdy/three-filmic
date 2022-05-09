@@ -3,10 +3,10 @@ import { Uniform, Vector2 } from 'three';
 import { Allocation, Defines, Uniforms } from '../constants';
 
 interface AllocationOptions {
-	allocation: Allocation,
-	domain: Vector2,
-	range: Vector2,
-	inverse: boolean,
+	allocation: Allocation;
+	domain: Vector2;
+	range: Vector2;
+	inverse: boolean;
 }
 
 const DEFAULTS: AllocationOptions = {
@@ -59,14 +59,14 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 	`.trim();
 
 	constructor(options = {} as Partial<AllocationOptions>) {
-		const _options = {...DEFAULTS, ...options} as Required<AllocationOptions>;
+		const _options = { ...DEFAULTS, ...options } as Required<AllocationOptions>;
 		super('AllocationTransform', AllocationTransform.FRAG, {
 			blendFunction: BlendFunction.NORMAL,
 			uniforms: new Map([
 				[Uniforms.DOMAIN, new Uniform(_options.domain)],
-				[Uniforms.RANGE, new Uniform(_options.range)]
+				[Uniforms.RANGE, new Uniform(_options.range)],
 			]),
-			defines: new Map([[Defines.ALLOCATION, _options.allocation.toFixed(0)]])
+			defines: new Map([[Defines.ALLOCATION, _options.allocation.toFixed(0)]]),
 		});
 		if (_options.inverse) {
 			this.defines.set(Defines.INVERSE, '');
