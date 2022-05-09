@@ -1,49 +1,49 @@
 {
-  "name": "three-filmic",
-  "version": "0.0.1",
-  "description": "Film emulsion-like rendering transforms for three.js, based on filmic-blender",
-  "main": "dist/three-filmic.js",
-  "module": "dist/three-filmic.modern.js",
-  "types": "dist/index.d.ts",
-  "repository": "github:donmccurdy/three-filmic",
-  "author": "Don McCurdy <dm@donmccurdy.com>",
-  "license": "MIT",
-  "scripts": {
-    "dist": "microbundle --format modern,cjs --define PACKAGE_VERSION=$npm_package_version",
-    "watch": "microbundle watch --format modern,cjs --define PACKAGE_VERSION=$npm_package_version",
-    "watch:debug": "microbundle watch --no-compress --format modern,cjs --define PACKAGE_VERSION=$npm_package_version",
-    "dev": "concurrently \"yarn watch:debug\" \"snowpack dev --config snowpack.config.cjs\"",
-    "test": "ts-node node_modules/tape/bin/tape test/*.ts | tap-spec",
-    "coverage": "nyc --reporter=lcov --reporter=text ts-node node_modules/tape/bin/tape test/*.ts",
-    "preversion": "yarn dist && yarn test",
-    "version": "yarn dist && git add -u",
-    "postversion": "git push && git push --tags && npm publish"
-  },
-  "dependencies": {
-    "@types/three": "^0.136.x",
-    "postprocessing": "^6.26.4",
-    "three": "^0.136.x"
-  },
-  "devDependencies": {
-    "@types/tape": "^4.13.0",
-    "@typescript-eslint/eslint-plugin": "^4.22.0",
-    "concurrently": "^7.1.0",
-    "eslint": "^7.24.0",
-    "lil-gui": "^0.16.1",
-    "microbundle": "^0.13.0",
-    "nyc": "^15.1.0",
-    "snowpack": "^3.8.8",
-    "source-map-support": "^0.5.19",
-    "tap-spec": "^5.0.0",
-    "tape": "^5.2.2",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.2.4"
-  },
-  "files": [
-    "dist/",
-    "src/",
-    "README.md",
-    "LICENSE",
-    "package.json"
-  ]
+	"name": "three-filmic",
+	"version": "0.0.1",
+	"description": "Film emulsion-like rendering transforms for three.js, based on filmic-blender",
+	"main": "dist/three-filmic.js",
+	"module": "dist/three-filmic.modern.js",
+	"types": "dist/index.d.ts",
+	"repository": "github:donmccurdy/three-filmic",
+	"author": "Don McCurdy <dm@donmccurdy.com>",
+	"license": "MIT",
+	"scripts": {
+		"dist": "microbundle --format modern,cjs --define PACKAGE_VERSION=$npm_package_version",
+		"watch": "microbundle watch --format modern,cjs --define PACKAGE_VERSION=$npm_package_version",
+		"watch:debug": "microbundle watch --no-compress --format modern,cjs --define PACKAGE_VERSION=$npm_package_version",
+		"dev": "concurrently \"yarn watch:debug\" \"snowpack dev --config snowpack.config.cjs\"",
+		"test": "ts-node node_modules/tape/bin/tape test/*.ts | tap-spec",
+		"coverage": "nyc --reporter=lcov --reporter=text ts-node node_modules/tape/bin/tape test/*.ts",
+		"preversion": "yarn dist && yarn test",
+		"version": "yarn dist && git add -u",
+		"postversion": "git push && git push --tags && npm publish"
+	},
+	"dependencies": {
+		"@types/three": "^0.136.x",
+		"postprocessing": "^6.26.4",
+		"three": "^0.136.x"
+	},
+	"devDependencies": {
+		"@types/tape": "^4.13.0",
+		"@typescript-eslint/eslint-plugin": "^4.22.0",
+		"concurrently": "^7.1.0",
+		"eslint": "^7.24.0",
+		"lil-gui": "^0.16.1",
+		"microbundle": "^0.13.0",
+		"nyc": "^15.1.0",
+		"snowpack": "^3.8.8",
+		"source-map-support": "^0.5.19",
+		"tap-spec": "^5.0.0",
+		"tape": "^5.2.2",
+		"ts-node": "^9.1.1",
+		"typescript": "^4.2.4"
+	},
+	"files": [
+		"dist/",
+		"src/",
+		"README.md",
+		"LICENSE",
+		"package.json"
+	]
 }

@@ -7,5 +7,5 @@ module.exports = {
 		'**/node_modules/**/*',
 		'**/.git/**/*',
 		'**/src/**/*', // watch dist/, not src/.
-	]
+	],
 };

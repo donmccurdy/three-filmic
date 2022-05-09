@@ -1,1 +1,1 @@
-{"extends": ["github>donmccurdy/renovate-config"]}
+{ "extends": ["github>donmccurdy/renovate-config"] }

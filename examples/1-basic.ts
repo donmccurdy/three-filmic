@@ -33,7 +33,7 @@ const LOOK_OPTIONS: Record<Look, string> = {
 	MEDIUM_LOW_CONTRAST: '/assets/luts/Filmic_to_0-60_1-04.cube',
 	LOW_CONTRAST: '/assets/luts/Filmic_to_0-48_1-09.cube',
 	VERY_LOW_CONTRAST: '/assets/luts/Filmic_to_0-35_1-30.cube',
-}
+};
 
 let gui;
 let camera: THREE.PerspectiveCamera, scene: THREE.Scene, renderer: THREE.WebGLRenderer;
@@ -43,30 +43,27 @@ let filmicPass: FilmicPass;
 init().then(render);
 
 async function init() {
+	const container = document.createElement('div');
+	document.body.appendChild(container);
 
-	const container = document.createElement( 'div' );
-	document.body.appendChild( container );
-
-	camera = new THREE.PerspectiveCamera( 45, window.innerWidth / window.innerHeight, 0.25, 20 );
-	camera.position.set( - 1.8, 0.6, 2.7 );
+	camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.25, 20);
+	camera.position.set(-1.8, 0.6, 2.7);
 
 	scene = new THREE.Scene();
 
 	// Model.
 
-	new GLTFLoader()
-		.load( '/assets/DamagedHelmet.glb', (gltf) => {
-			scene.add(gltf.scene);
-		});
+	new GLTFLoader().load('/assets/DamagedHelmet.glb', (gltf) => {
+		scene.add(gltf.scene);
+	});
 
 	// Environment.
 
-	new RGBELoader()
-		.load('/assets/royal_esplanade_1k.hdr', (texture) => {
-			texture.mapping = THREE.EquirectangularReflectionMapping;
-			scene.background = texture;
-			scene.environment = texture;
-		});
+	new RGBELoader().load('/assets/royal_esplanade_1k.hdr', (texture) => {
+		texture.mapping = THREE.EquirectangularReflectionMapping;
+		scene.background = texture;
+		scene.environment = texture;
+	});
 
 	// Renderer.
 
@@ -74,9 +71,9 @@ async function init() {
 	renderer.physicallyCorrectLights = true;
 	renderer.outputEncoding = sRGBEncoding;
 	renderer.toneMapping = NoToneMapping;
-	renderer.setPixelRatio( window.devicePixelRatio );
-	renderer.setSize( window.innerWidth, window.innerHeight );
-	container.appendChild( renderer.domElement );
+	renderer.setPixelRatio(window.devicePixelRatio);
+	renderer.setSize(window.innerWidth, window.innerHeight);
+	container.appendChild(renderer.domElement);
 
 	// Post-processing.
 
@@ -96,27 +93,30 @@ async function init() {
 	const controls = new OrbitControls(camera, renderer.domElement);
 	controls.minDistance = 2;
 	controls.maxDistance = 10;
-	controls.target.set( 0, 0, - 0.2 );
+	controls.target.set(0, 0, -0.2);
 	controls.update();
 
 	// GUI.
 
-	gui = new GUI({width: 300});
-	gui.add( params, 'enabled' ).onChange(() => {
+	gui = new GUI({ width: 300 });
+	gui.add(params, 'enabled').onChange(() => {
 		filmicPass.enabled = params.enabled;
 		filmicPass.recompile();
 	});
-	gui.add( params, 'view', Object.keys( VIEW_OPTIONS ) ).onChange(() => {
+	gui.add(params, 'view', Object.keys(VIEW_OPTIONS)).onChange(() => {
 		filmicPass.view = VIEW_OPTIONS[params.view];
 		filmicPass.recompile();
 	});
-	gui.add( params, 'look', Object.keys( LOOK_OPTIONS ) ).onChange(async () => {
+	gui.add(params, 'look', Object.keys(LOOK_OPTIONS)).onChange(async () => {
 		filmicPass.lookLUT = await lut1DLoader.loadAsync(LOOK_OPTIONS[params.look]);
 		filmicPass.recompile();
 	});
-	gui.add( params, 'exposure' ).min( -10 ).max( 10 ).onChange(() => {
-		filmicPass.exposure = params.exposure;
-	});
+	gui.add(params, 'exposure')
+		.min(-10)
+		.max(10)
+		.onChange(() => {
+			filmicPass.exposure = params.exposure;
+		});
 
 	window.addEventListener('resize', onWindowResize);
 }
