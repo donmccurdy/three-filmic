@@ -75,10 +75,8 @@ export class FilmicPass extends EffectPass {
 
 	// TODO(cleanup): Do without a build method?
 	recompile() {
-		// Remove previous filmic transform.
+		// Reset previous filmic transform.
 		this.effects.length = this._prevEffects.length;
-
-		// Apply updated filmic transform.
 
 		// 1. Exposure.
 		this.effects.push(this._exposureTransform);
@@ -106,9 +104,12 @@ export class FilmicPass extends EffectPass {
 			if (this._view === View.GRAYSCALE || this._view === View.FALSE_COLOR) {
 				this.effects.push(
 					new MatrixTransform(
+						// prettier-ignore
 						new Matrix4().fromArray([
-							0.2126729, 0.7151521, 0.072175, 0, 0.2126729, 0.7151521, 0.072175, 0, 0.2126729, 0.7151521,
-							0.072175, 0, 0, 0, 0, 1,
+							0.2126729, 0.7151521, 0.072175, 0,
+							0.2126729, 0.7151521, 0.072175, 0,
+							0.2126729, 0.7151521, 0.072175, 0,
+							0, 0, 0, 1,
 						])
 					)
 				);

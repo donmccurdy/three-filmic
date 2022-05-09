@@ -30,7 +30,6 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 		super('LUT1DEffect', LUT1DEffect.FRAG, {
 			blendFunction: BlendFunction.NORMAL,
 			uniforms: new Map([[Uniforms.LUT, new Uniform(lut)]]),
-			defines: new Map([[Defines.ENABLED, '']]),
 		});
 	}
 
