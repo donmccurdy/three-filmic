@@ -11,7 +11,6 @@ const lut3DLoader = new LUTCubeLoader();
 const lut1DLoader = new LUT1DCubeLoader();
 
 const params = {
-	enabled: true,
 	view: 'FILMIC',
 	look: 'MEDIUM_CONTRAST',
 	exposure: 0,
@@ -98,11 +97,7 @@ async function init() {
 
 	// GUI.
 
-	gui = new GUI({ width: 300 });
-	gui.add(params, 'enabled').onChange(() => {
-		filmicPass.enabled = params.enabled;
-		filmicPass.recompile();
-	});
+	gui = new GUI({ width: 250 });
 	gui.add(params, 'view', Object.keys(VIEW_OPTIONS)).onChange(() => {
 		filmicPass.view = VIEW_OPTIONS[params.view];
 		filmicPass.recompile();

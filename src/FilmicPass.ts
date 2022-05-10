@@ -74,6 +74,7 @@ export class FilmicPass extends EffectPass {
 	 */
 
 	// TODO(cleanup): Do without a build method?
+	// TODO(cleanup): Why does every effect have a blend function?
 	recompile() {
 		// Reset previous filmic transform.
 		this.effects.length = this._prevEffects.length;
@@ -96,7 +97,11 @@ export class FilmicPass extends EffectPass {
 			);
 
 			// 3. Look Transform
-			if (this._view === View.FILMIC || this._view === View.GRAYSCALE) {
+			if (
+				this._view === View.FILMIC ||
+				this._view === View.GRAYSCALE ||
+				this._view === View.FALSE_COLOR
+			) {
 				this.effects.push(new LUT1DEffect(this._lookLUT));
 			}
 
@@ -115,7 +120,10 @@ export class FilmicPass extends EffectPass {
 				);
 			}
 			if (this._view === View.FALSE_COLOR) {
-				this.effects.push(new LUTEffect(this._falseColorLUT));
+				// TODO(perf): I don't see why this couldn't be a 1D LUT?
+				this.effects.push(
+					new LUTEffect(this._falseColorLUT, { tetrahedralInterpolation: false })
+				);
 			}
 		}
 

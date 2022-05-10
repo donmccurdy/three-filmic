@@ -1,6 +1,6 @@
 import { BlendFunction, Effect } from 'postprocessing';
 import { DataTexture, Uniform } from 'three';
-import { Defines, Uniforms } from '../constants';
+import { Uniforms } from '../constants';
 
 export class LUT1DEffect extends Effect {
 	static readonly FRAG = `
@@ -39,6 +39,5 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 
 	set lut(lut: DataTexture) {
 		this.uniforms.get(Uniforms.LUT)!.value = lut;
-		this.setChanged();
 	}
 }

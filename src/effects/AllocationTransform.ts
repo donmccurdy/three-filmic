@@ -38,6 +38,7 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 		#endif
 
 		color = remap(color, domain, range);
+		color.rgb = clamp(color.rgb, range.x, range.y);
 
 	#else
 
@@ -50,6 +51,8 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 			color.b = pow(2.0, color.b);
 
 		#endif
+
+		color.rgb = clamp(color.rgb, range.x, range.y);
 
 	#endif
 
