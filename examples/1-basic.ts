@@ -5,7 +5,6 @@ import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { GUI } from 'lil-gui';
 import { EffectComposer, LUTCubeLoader, RenderPass } from 'postprocessing';
 import { FilmicPass, View, Look, LUT1DCubeLoader } from '../dist/three-filmic.modern.js';
-import { NoToneMapping, sRGBEncoding } from 'three';
 
 const lut3DLoader = new LUTCubeLoader();
 const lut1DLoader = new LUT1DCubeLoader();
@@ -68,8 +67,8 @@ async function init() {
 
 	renderer = new THREE.WebGLRenderer();
 	renderer.physicallyCorrectLights = true;
-	renderer.outputEncoding = sRGBEncoding;
-	renderer.toneMapping = NoToneMapping;
+	renderer.outputEncoding = THREE.sRGBEncoding;
+	renderer.toneMapping = THREE.NoToneMapping;
 	renderer.setPixelRatio(window.devicePixelRatio);
 	renderer.setSize(window.innerWidth, window.innerHeight);
 	container.appendChild(renderer.domElement);

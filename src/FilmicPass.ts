@@ -120,9 +120,9 @@ export class FilmicPass extends EffectPass {
 				);
 			}
 			if (this._view === View.FALSE_COLOR) {
-				// TODO(perf): I don't see why this couldn't be a 1D LUT?
+				// TODO(perf): Couldn't this be a 1D LUT?
 				this.effects.push(
-					new LUTEffect(this._falseColorLUT, { tetrahedralInterpolation: false })
+					new LUTEffect(this._falseColorLUT, { tetrahedralInterpolation: true })
 				);
 			}
 		}
