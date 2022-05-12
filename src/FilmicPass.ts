@@ -1,4 +1,4 @@
-import { Camera, DataTexture, DataTexture3D, Matrix4, Vector2 } from 'three';
+import { Camera, DataTexture, DataTexture3D, LinearEncoding, Matrix4, Vector2 } from 'three';
 import { Effect, EffectPass, LookupTexture, LUTEffect } from 'postprocessing';
 import { View, DEFAULT_VIEW, Allocation, NEUTRAL_LUT_3D, NEUTRAL_LUT_1D } from './constants';
 import { AllocationTransform, ExposureTransform, MatrixTransform, LUT1DEffect } from './effects';
@@ -83,13 +83,17 @@ export class FilmicPass extends EffectPass {
 		this.effects.push(this._exposureTransform);
 
 		if (this._view !== View.NONE) {
+			// TODO(cleanup): Make 'inputEncoding' a parameter.
+			const filmicEffect = new LUTEffect(this.filmicLUT);
+			filmicEffect.inputEncoding = LinearEncoding;
+
 			// 2. Scene Linear to Filmic Log
 			this.effects.push(
 				new AllocationTransform({
 					allocation: Allocation.LG2,
 					domain: new Vector2(-12.473931188, 12.526068812),
 				}),
-				new LUTEffect(this.filmicLUT),
+				filmicEffect,
 				new AllocationTransform({
 					allocation: Allocation.UNIFORM,
 					domain: new Vector2(0, 0.66),
@@ -97,11 +101,7 @@ export class FilmicPass extends EffectPass {
 			);
 
 			// 3. Look Transform
-			if (
-				this._view === View.FILMIC ||
-				this._view === View.GRAYSCALE ||
-				this._view === View.FALSE_COLOR
-			) {
+			if (this._view === View.FILMIC || this._view === View.GRAYSCALE) {
 				this.effects.push(new LUT1DEffect(this._lookLUT));
 			}
 
@@ -121,9 +121,10 @@ export class FilmicPass extends EffectPass {
 			}
 			if (this._view === View.FALSE_COLOR) {
 				// TODO(perf): Couldn't this be a 1D LUT?
-				this.effects.push(
-					new LUTEffect(this._falseColorLUT, { tetrahedralInterpolation: true })
-				);
+				// TODO(cleanup): Make 'inputEncoding' a parameter.
+				const falseColorEffect = new LUTEffect(this._falseColorLUT);
+				falseColorEffect.inputEncoding = LinearEncoding;
+				this.effects.push(falseColorEffect);
 			}
 		}
 
