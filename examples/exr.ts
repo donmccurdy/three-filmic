@@ -13,7 +13,7 @@ const params = {
 	exposure: 0,
 };
 
-const VIEW_OPTIONS: Record<View, View> = {
+const VIEW_OPTIONS: Record<keyof View, View> = {
 	NONE: View.NONE,
 	FILMIC: View.FILMIC,
 	FILMIC_LOG: View.FILMIC_LOG,
@@ -21,7 +21,7 @@ const VIEW_OPTIONS: Record<View, View> = {
 	GRAYSCALE: View.GRAYSCALE,
 };
 
-const LOOK_OPTIONS: Record<Look, string> = {
+const LOOK_OPTIONS: Record<keyof Look, string> = {
 	VERY_HIGH_CONTRAST: '/assets/luts/Filmic_to_1.20_1-00.cube',
 	HIGH_CONTRAST: '/assets/luts/Filmic_to_0.99_1-0075.cube',
 	MEDIUM_HIGH_CONTRAST: '/assets/luts/Filmic_to_0-85_1-011.cube',
