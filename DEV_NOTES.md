@@ -1,11 +1,5 @@
 ## Generating LUTs
 
-To do:
-
-- [ ] Compare LUT results
-- [ ] Compare to Blender LUTs (False Color differs, desat is the same)
-- [ ] three.js and pmndrs support only 3D LUTs
-
 Examples:
 
 ```shell
