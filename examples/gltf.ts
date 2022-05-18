@@ -4,7 +4,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader.js';
 import { GUI } from 'lil-gui';
 import { EffectComposer, LUTCubeLoader, RenderPass } from 'postprocessing';
-import { FilmicPass, View, Look, LUT1DCubeLoader } from '../dist/three-filmic.modern.js';
+import { FilmicPass, View, Look, LUT1DCubeLoader } from 'three-filmic';
 
 const lut3DLoader = new LUTCubeLoader();
 const lut1DLoader = new LUT1DCubeLoader();
@@ -24,13 +24,13 @@ const VIEW_OPTIONS: Record<View, View> = {
 };
 
 const LOOK_OPTIONS: Record<Look, string> = {
-	VERY_HIGH_CONTRAST: '/assets/luts/Filmic_to_1.20_1-00.cube',
-	HIGH_CONTRAST: '/assets/luts/Filmic_to_0.99_1-0075.cube',
-	MEDIUM_HIGH_CONTRAST: '/assets/luts/Filmic_to_0-85_1-011.cube',
-	MEDIUM_CONTRAST: '/assets/luts/Filmic_to_0-70_1-03.cube',
-	MEDIUM_LOW_CONTRAST: '/assets/luts/Filmic_to_0-60_1-04.cube',
-	LOW_CONTRAST: '/assets/luts/Filmic_to_0-48_1-09.cube',
-	VERY_LOW_CONTRAST: '/assets/luts/Filmic_to_0-35_1-30.cube',
+	VERY_HIGH_CONTRAST: '/luts/Filmic_to_1.20_1-00.cube',
+	HIGH_CONTRAST: '/luts/Filmic_to_0.99_1-0075.cube',
+	MEDIUM_HIGH_CONTRAST: '/luts/Filmic_to_0-85_1-011.cube',
+	MEDIUM_CONTRAST: '/luts/Filmic_to_0-70_1-03.cube',
+	MEDIUM_LOW_CONTRAST: '/luts/Filmic_to_0-60_1-04.cube',
+	LOW_CONTRAST: '/luts/Filmic_to_0-48_1-09.cube',
+	VERY_LOW_CONTRAST: '/luts/Filmic_to_0-35_1-30.cube',
 };
 
 let gui;
@@ -51,13 +51,13 @@ async function init() {
 
 	// Model.
 
-	new GLTFLoader().load('/assets/DamagedHelmet.glb', (gltf) => {
+	new GLTFLoader().load('/DamagedHelmet.glb', (gltf) => {
 		scene.add(gltf.scene);
 	});
 
 	// Environment.
 
-	new RGBELoader().load('/assets/royal_esplanade_1k.hdr', (texture) => {
+	new RGBELoader().load('/royal_esplanade_1k.hdr', (texture) => {
 		texture.mapping = THREE.EquirectangularReflectionMapping;
 		scene.background = texture;
 		scene.environment = texture;
@@ -76,9 +76,9 @@ async function init() {
 	// Post-processing.
 
 	filmicPass = new FilmicPass(camera);
-	filmicPass.filmicLUT = await lut3DLoader.loadAsync('/assets/luts/desat65cube.cube');
+	filmicPass.filmicLUT = await lut3DLoader.loadAsync('/luts/desat65cube.cube');
 	filmicPass.falseColorLUT = await lut3DLoader.loadAsync(
-		'/assets/luts/Filmic_False_Colour.blender.cube'
+		'/luts/Filmic_False_Colour.blender.cube'
 	);
 	filmicPass.lookLUT = await lut1DLoader.loadAsync(LOOK_OPTIONS[params.look]);
 	filmicPass.recompile();

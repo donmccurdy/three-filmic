@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 import { EffectComposer, LUTCubeLoader, RenderPass } from 'postprocessing';
-import { FilmicPass, View, Look, LUT1DCubeLoader } from '../dist/three-filmic.modern.js';
+import { FilmicPass, View, Look, LUT1DCubeLoader } from 'three-filmic';
 import { EXRLoader } from './EXRLoader.js';
 
 /******************************************************************************
@@ -11,13 +11,13 @@ const WIDTH = 960;
 const HEIGHT = 540;
 
 const LOOK_OPTIONS: Record<Look, string> = {
-	[Look.VERY_HIGH_CONTRAST]: '/assets/luts/Filmic_to_1.20_1-00.cube',
-	[Look.HIGH_CONTRAST]: '/assets/luts/Filmic_to_0.99_1-0075.cube',
-	[Look.MEDIUM_HIGH_CONTRAST]: '/assets/luts/Filmic_to_0-85_1-011.cube',
-	[Look.MEDIUM_CONTRAST]: '/assets/luts/Filmic_to_0-70_1-03.cube',
-	[Look.MEDIUM_LOW_CONTRAST]: '/assets/luts/Filmic_to_0-60_1-04.cube',
-	[Look.LOW_CONTRAST]: '/assets/luts/Filmic_to_0-48_1-09.cube',
-	[Look.VERY_LOW_CONTRAST]: '/assets/luts/Filmic_to_0-35_1-30.cube',
+	[Look.VERY_HIGH_CONTRAST]: '/luts/Filmic_to_1.20_1-00.cube',
+	[Look.HIGH_CONTRAST]: '/luts/Filmic_to_0.99_1-0075.cube',
+	[Look.MEDIUM_HIGH_CONTRAST]: '/luts/Filmic_to_0-85_1-011.cube',
+	[Look.MEDIUM_CONTRAST]: '/luts/Filmic_to_0-70_1-03.cube',
+	[Look.MEDIUM_LOW_CONTRAST]: '/luts/Filmic_to_0-60_1-04.cube',
+	[Look.LOW_CONTRAST]: '/luts/Filmic_to_0-48_1-09.cube',
+	[Look.VERY_LOW_CONTRAST]: '/luts/Filmic_to_0-35_1-30.cube',
 };
 
 const IMAGES = [
@@ -94,7 +94,7 @@ async function init() {
 
 	scene = new THREE.Scene();
 	scene.add(camera);
-	scene.background = await exrLoader.loadAsync('/assets/reference/cornell_box.exr');
+	scene.background = await exrLoader.loadAsync('/reference/cornell_box.exr');
 	(scene.background as THREE.Texture).encoding = THREE.LinearEncoding;
 
 	// Renderer.
@@ -110,9 +110,9 @@ async function init() {
 	// Post-processing.
 
 	filmicPass = new FilmicPass(camera);
-	filmicPass.filmicLUT = await lut3DLoader.loadAsync('/assets/luts/desat65cube.cube');
+	filmicPass.filmicLUT = await lut3DLoader.loadAsync('/luts/desat65cube.cube');
 	filmicPass.filmicLUT.encoding = THREE.LinearEncoding;
-	filmicPass.falseColorLUT = await lut3DLoader.loadAsync('/assets/luts/Filmic_False_Colour.cube');
+	filmicPass.falseColorLUT = await lut3DLoader.loadAsync('/luts/Filmic_False_Colour.cube');
 	filmicPass.falseColorLUT.encoding = THREE.sRGBEncoding;
 	filmicPass.recompile();
 
@@ -151,7 +151,7 @@ async function main() {
 		sectionEl.innerHTML = `
 <h2>${image.name}</h2>
 <figure>
-	<img src="/assets/reference/out/${image.id}.png" alt="">
+	<img src="/reference/out/${image.id}.png" alt="">
 	<canvas id="${image.id}" width=960 height=540></canvas>
 	<figcaption>
 		<div class="caption -left">OpenImageIO</div>

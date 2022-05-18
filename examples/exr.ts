@@ -2,7 +2,7 @@ import * as THREE from 'three';
 import { EXRLoader } from './EXRLoader.js';
 import { GUI } from 'lil-gui';
 import { EffectComposer, LUTCubeLoader, RenderPass } from 'postprocessing';
-import { FilmicPass, View, Look, LUT1DCubeLoader } from '../dist/three-filmic.modern.js';
+import { FilmicPass, View, Look, LUT1DCubeLoader } from 'three-filmic';
 
 const lut3DLoader = new LUTCubeLoader();
 const lut1DLoader = new LUT1DCubeLoader();
@@ -22,13 +22,13 @@ const VIEW_OPTIONS: Record<keyof View, View> = {
 };
 
 const LOOK_OPTIONS: Record<keyof Look, string> = {
-	VERY_HIGH_CONTRAST: '/assets/luts/Filmic_to_1.20_1-00.cube',
-	HIGH_CONTRAST: '/assets/luts/Filmic_to_0.99_1-0075.cube',
-	MEDIUM_HIGH_CONTRAST: '/assets/luts/Filmic_to_0-85_1-011.cube',
-	MEDIUM_CONTRAST: '/assets/luts/Filmic_to_0-70_1-03.cube',
-	MEDIUM_LOW_CONTRAST: '/assets/luts/Filmic_to_0-60_1-04.cube',
-	LOW_CONTRAST: '/assets/luts/Filmic_to_0-48_1-09.cube',
-	VERY_LOW_CONTRAST: '/assets/luts/Filmic_to_0-35_1-30.cube',
+	VERY_HIGH_CONTRAST: '/luts/Filmic_to_1.20_1-00.cube',
+	HIGH_CONTRAST: '/luts/Filmic_to_0.99_1-0075.cube',
+	MEDIUM_HIGH_CONTRAST: '/luts/Filmic_to_0-85_1-011.cube',
+	MEDIUM_CONTRAST: '/luts/Filmic_to_0-70_1-03.cube',
+	MEDIUM_LOW_CONTRAST: '/luts/Filmic_to_0-60_1-04.cube',
+	LOW_CONTRAST: '/luts/Filmic_to_0-48_1-09.cube',
+	VERY_LOW_CONTRAST: '/luts/Filmic_to_0-35_1-30.cube',
 };
 
 let gui;
@@ -52,7 +52,7 @@ async function init() {
 		new THREE.MeshBasicMaterial({ color: 0xffffff })
 	);
 
-	new EXRLoader().load('/assets/reference/cornell_box.exr', (texture: THREE.DataTexture) => {
+	new EXRLoader().load('/reference/cornell_box.exr', (texture: THREE.DataTexture) => {
 		texture.encoding = THREE.LinearEncoding;
 
 		const aspect = texture.image.width / texture.image.height;
@@ -85,9 +85,9 @@ async function init() {
 
 	filmicPass = new FilmicPass(camera);
 	filmicPass.view = View[params.view];
-	filmicPass.filmicLUT = await lut3DLoader.loadAsync('/assets/luts/desat65cube.cube');
+	filmicPass.filmicLUT = await lut3DLoader.loadAsync('/luts/desat65cube.cube');
 	filmicPass.filmicLUT.encoding = THREE.LinearEncoding;
-	filmicPass.falseColorLUT = await lut3DLoader.loadAsync('/assets/luts/Filmic_False_Colour.cube');
+	filmicPass.falseColorLUT = await lut3DLoader.loadAsync('/luts/Filmic_False_Colour.cube');
 	filmicPass.falseColorLUT.encoding = THREE.sRGBEncoding;
 	filmicPass.lookLUT = await lut1DLoader.loadAsync(LOOK_OPTIONS[params.look]);
 	filmicPass.lookLUT.encoding = THREE.sRGBEncoding;
