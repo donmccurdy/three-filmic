@@ -17,7 +17,7 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 
 	constructor(matrix: Matrix4) {
 		super('MatrixTransform', MatrixTransform.FRAG, {
-			blendFunction: BlendFunction.NORMAL,
+			blendFunction: BlendFunction.SET,
 			uniforms: new Map([[Uniforms.MATRIX, new Uniform(matrix)]]),
 		});
 		this.matrix = matrix;

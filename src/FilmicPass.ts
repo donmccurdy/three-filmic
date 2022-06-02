@@ -1,14 +1,21 @@
-import { Camera, DataTexture, DataTexture3D, LinearEncoding, Matrix4, Vector2 } from 'three';
-import { Effect, EffectPass, LookupTexture, LUTEffect } from 'postprocessing';
-import { View, DEFAULT_VIEW, Allocation, NEUTRAL_LUT_3D, NEUTRAL_LUT_1D } from './constants';
-import { AllocationTransform, ExposureTransform, MatrixTransform, LUT1DEffect } from './effects';
+import { Camera, DataTexture, Data3DTexture, LinearEncoding, Matrix4, Vector2 } from 'three';
+import {
+	BlendFunction,
+	Effect,
+	EffectPass,
+	LookupTexture,
+	LUT1DEffect,
+	LUT3DEffect,
+} from 'postprocessing';
+import { View, DEFAULT_VIEW, Allocation, NEUTRAL_LUT_3D, NEUTRAL_LUT_1D, $TODO } from './constants';
+import { AllocationTransform, ExposureTransform, MatrixTransform } from './effects';
 
 // TODO(docs): API documentation.
 export class FilmicPass extends EffectPass {
 	private _view: View = DEFAULT_VIEW;
 
-	private _filmicLUT: DataTexture3D | LookupTexture = NEUTRAL_LUT_3D;
-	private _falseColorLUT: DataTexture3D | LookupTexture = NEUTRAL_LUT_3D;
+	private _filmicLUT: Data3DTexture | LookupTexture = NEUTRAL_LUT_3D;
+	private _falseColorLUT: Data3DTexture | LookupTexture = NEUTRAL_LUT_3D;
 	private _lookLUT: DataTexture = NEUTRAL_LUT_1D;
 
 	private _prevEffects: Effect[];
@@ -45,19 +52,19 @@ export class FilmicPass extends EffectPass {
 	 * LUTs.
 	 */
 
-	get filmicLUT(): DataTexture3D | LookupTexture {
+	get filmicLUT(): Data3DTexture | LookupTexture {
 		return this._filmicLUT;
 	}
 
-	set filmicLUT(lut: DataTexture3D | LookupTexture) {
+	set filmicLUT(lut: Data3DTexture | LookupTexture) {
 		this._filmicLUT = lut;
 	}
 
-	get falseColorLUT(): DataTexture3D | LookupTexture {
+	get falseColorLUT(): Data3DTexture | LookupTexture {
 		return this._falseColorLUT;
 	}
 
-	set falseColorLUT(lut: DataTexture3D | LookupTexture) {
+	set falseColorLUT(lut: Data3DTexture | LookupTexture) {
 		this._falseColorLUT = lut;
 	}
 
@@ -77,23 +84,22 @@ export class FilmicPass extends EffectPass {
 	// TODO(cleanup): Why does every effect have a blend function?
 	recompile() {
 		// Reset previous filmic transform.
-		this.effects.length = this._prevEffects.length;
+		const effects = [...this._prevEffects];
 
 		// 1. Exposure.
-		this.effects.push(this._exposureTransform);
+		effects.push(this._exposureTransform);
 
 		if (this._view !== View.NONE) {
-			// TODO(cleanup): Make 'inputEncoding' a parameter.
-			const filmicEffect = new LUTEffect(this.filmicLUT);
-			filmicEffect.inputEncoding = LinearEncoding;
-
 			// 2. Scene Linear to Filmic Log
-			this.effects.push(
+			effects.push(
 				new AllocationTransform({
 					allocation: Allocation.LG2,
 					domain: new Vector2(-12.473931188, 12.526068812),
 				}),
-				filmicEffect,
+				new LUT3DEffect(this.filmicLUT, {
+					blendFunction: BlendFunction.SET,
+					inputEncoding: LinearEncoding,
+				} as $TODO),
 				new AllocationTransform({
 					allocation: Allocation.UNIFORM,
 					domain: new Vector2(0, 0.66),
@@ -102,12 +108,16 @@ export class FilmicPass extends EffectPass {
 
 			// 3. Look Transform
 			if (this._view === View.FILMIC || this._view === View.GRAYSCALE) {
-				this.effects.push(new LUT1DEffect(this._lookLUT));
+				effects.push(
+					new LUT1DEffect(this._lookLUT, {
+						blendFunction: BlendFunction.SET,
+					})
+				);
 			}
 
 			// 4. View Transform
 			if (this._view === View.GRAYSCALE || this._view === View.FALSE_COLOR) {
-				this.effects.push(
+				effects.push(
 					new MatrixTransform(
 						// prettier-ignore
 						new Matrix4().fromArray([
@@ -121,10 +131,12 @@ export class FilmicPass extends EffectPass {
 			}
 			if (this._view === View.FALSE_COLOR) {
 				// TODO(perf): Couldn't this be a 1D LUT?
-				// TODO(cleanup): Make 'inputEncoding' a parameter.
-				const falseColorEffect = new LUTEffect(this._falseColorLUT);
-				falseColorEffect.inputEncoding = LinearEncoding;
-				this.effects.push(falseColorEffect);
+				effects.push(
+					new LUT3DEffect(this._falseColorLUT, {
+						blendFunction: BlendFunction.SET,
+						inputEncoding: LinearEncoding,
+					} as $TODO)
+				);
 			}
 		}
 
@@ -132,6 +144,8 @@ export class FilmicPass extends EffectPass {
 		// default output encoding.
 		this.fullscreenMaterial.encodeOutput = this._view === View.NONE;
 
-		if (this.renderer) super.recompile();
+		this.setEffects(effects);
+
+		super.recompile();
 	}
 }

@@ -1,5 +1,14 @@
 import { LookupTexture } from 'postprocessing';
-import { ClampToEdgeWrapping, DataTexture, FloatType, LinearFilter, RedFormat, UVMapping } from 'three';
+import {
+	ClampToEdgeWrapping,
+	DataTexture,
+	FloatType,
+	LinearFilter,
+	RedFormat,
+	UVMapping,
+} from 'three';
+
+export type $TODO = any;
 
 export enum View {
 	NONE = 5000,

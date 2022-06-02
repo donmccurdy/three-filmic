@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import { EXRLoader } from './EXRLoader.js';
+import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
 import { GUI } from 'lil-gui';
 import { EffectComposer, LUTCubeLoader, RenderPass } from 'postprocessing';
 import { FilmicPass, View, Look, LUT1DCubeLoader } from 'three-filmic';
@@ -90,7 +90,6 @@ async function init() {
 	filmicPass.falseColorLUT = await lut3DLoader.loadAsync('/luts/Filmic_False_Colour.cube');
 	filmicPass.falseColorLUT.encoding = THREE.sRGBEncoding;
 	filmicPass.lookLUT = await lut1DLoader.loadAsync(LOOK_OPTIONS[params.look]);
-	filmicPass.lookLUT.encoding = THREE.sRGBEncoding;
 	filmicPass.recompile();
 
 	composer = new EffectComposer(renderer, { frameBufferType: THREE.HalfFloatType });

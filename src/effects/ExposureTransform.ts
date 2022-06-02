@@ -15,7 +15,7 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 
 	constructor(exposure = DEFAULT_EXPOSURE) {
 		super('ExposureTransform', ExposureTransform.FRAG, {
-			blendFunction: BlendFunction.NORMAL,
+			blendFunction: BlendFunction.SET,
 			uniforms: new Map([[Uniforms.EXPOSURE, new Uniform(exposure)]]),
 		});
 	}

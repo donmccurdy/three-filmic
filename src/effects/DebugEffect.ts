@@ -18,6 +18,6 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 	`.trim();
 
 	constructor() {
-		super('DebugEffect', DebugEffect.FRAG, { blendFunction: BlendFunction.NORMAL });
+		super('DebugEffect', DebugEffect.FRAG, { blendFunction: BlendFunction.SET });
 	}
 }

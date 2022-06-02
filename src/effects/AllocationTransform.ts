@@ -64,7 +64,7 @@ void mainImage(const in vec4 inputColor, const in vec2 uv, out vec4 outputColor)
 	constructor(options = {} as Partial<AllocationOptions>) {
 		const _options = { ...DEFAULTS, ...options } as Required<AllocationOptions>;
 		super('AllocationTransform', AllocationTransform.FRAG, {
-			blendFunction: BlendFunction.NORMAL,
+			blendFunction: BlendFunction.SET,
 			uniforms: new Map([
 				[Uniforms.DOMAIN, new Uniform(_options.domain)],
 				[Uniforms.RANGE, new Uniform(_options.range)],

@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import { EffectComposer, LUTCubeLoader, RenderPass } from 'postprocessing';
 import { FilmicPass, View, Look, LUT1DCubeLoader } from 'three-filmic';
-import { EXRLoader } from './EXRLoader.js';
+import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
 
 /******************************************************************************
  * Reference images.
@@ -125,7 +125,6 @@ async function init() {
 async function renderImage(canvasEl: HTMLCanvasElement, view: View, look: Look) {
 	filmicPass.view = view;
 	filmicPass.lookLUT = await lut1DLoader.loadAsync(LOOK_OPTIONS[look]);
-	filmicPass.lookLUT.encoding = THREE.sRGBEncoding;
 	filmicPass.recompile();
 
 	composer.render();
