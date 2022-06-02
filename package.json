@@ -22,9 +22,9 @@
 		"postversion": "git push && git push --tags && npm publish"
 	},
 	"peerDependencies": {
-		"@types/three": ">=0.136.0",
-		"postprocessing": "6.x.x",
-		"three": ">=0.136.0"
+		"@types/three": ">=0.141.0",
+		"postprocessing": ">=6.27.0",
+		"three": ">=0.141.0"
 	},
 	"devDependencies": {
 		"@types/tape": "4.13.2",
