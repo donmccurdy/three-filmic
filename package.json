@@ -29,7 +29,7 @@
 	"devDependencies": {
 		"@types/tape": "4.13.2",
 		"@types/three": "0.141.0",
-		"@typescript-eslint/eslint-plugin": "4.33.0",
+		"@typescript-eslint/eslint-plugin": "5.29.0",
 		"concurrently": "7.1.0",
 		"eslint": "7.32.0",
 		"lil-gui": "0.16.1",
