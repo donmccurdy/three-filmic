@@ -29,20 +29,20 @@
 	"devDependencies": {
 		"@types/tape": "4.13.2",
 		"@types/three": "0.141.0",
-		"@typescript-eslint/eslint-plugin": "5.30.4",
+		"@typescript-eslint/eslint-plugin": "5.30.5",
 		"concurrently": "7.2.2",
 		"eslint": "8.19.0",
-		"lil-gui": "0.16.1",
+		"lil-gui": "0.17.0",
 		"microbundle": "0.15.0",
 		"nyc": "15.1.0",
-		"postprocessing": "6.28.1",
+		"postprocessing": "6.28.2",
 		"source-map-support": "0.5.21",
 		"tap-spec": "5.0.0",
 		"tape": "5.5.3",
 		"three": "0.142.0",
 		"ts-node": "10.8.2",
 		"typescript": "4.7.4",
-		"vite": "2.9.13"
+		"vite": "2.9.14"
 	},
 	"files": [
 		"dist/",
