@@ -28,9 +28,9 @@
 	},
 	"devDependencies": {
 		"@types/tape": "4.13.2",
-		"@types/three": "0.141.0",
-		"@typescript-eslint/eslint-plugin": "5.30.6",
-		"concurrently": "7.2.2",
+		"@types/three": "0.142.0",
+		"@typescript-eslint/eslint-plugin": "5.30.7",
+		"concurrently": "7.3.0",
 		"eslint": "8.20.0",
 		"lil-gui": "0.17.0",
 		"microbundle": "0.15.0",
