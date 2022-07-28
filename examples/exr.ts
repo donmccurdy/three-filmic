@@ -4,13 +4,13 @@ import { GUI } from 'lil-gui';
 import { EffectComposer, LUTCubeLoader, RenderPass } from 'postprocessing';
 import { FilmicPass, View, Look, LUT1DCubeLoader } from 'three-filmic';
 
+const exrLoader = new EXRLoader();
 const lut3DLoader = new LUTCubeLoader();
 const lut1DLoader = new LUT1DCubeLoader();
 
-const params = {
-	view: 'FILMIC',
-	look: 'MEDIUM_CONTRAST',
-	exposure: 0,
+const IMAGE_OPTIONS: Record<string, string> = {
+	CORNELL_BOX: '/reference/cornell_box.exr',
+	STEPCHART: '/reference/stepchart.exr',
 };
 
 const VIEW_OPTIONS: Record<keyof View, View> = {
@@ -29,6 +29,13 @@ const LOOK_OPTIONS: Record<keyof Look, string> = {
 	MEDIUM_LOW_CONTRAST: '/luts/Filmic_to_0-60_1-04.cube',
 	LOW_CONTRAST: '/luts/Filmic_to_0-48_1-09.cube',
 	VERY_LOW_CONTRAST: '/luts/Filmic_to_0-35_1-30.cube',
+};
+
+const params = {
+	image: 'CORNELL_BOX',
+	view: 'FILMIC',
+	look: 'MEDIUM_CONTRAST',
+	exposure: 0,
 };
 
 let gui;
@@ -52,15 +59,7 @@ async function init() {
 		new THREE.MeshBasicMaterial({ color: 0xffffff })
 	);
 
-	new EXRLoader().load('/reference/cornell_box.exr', (texture: THREE.DataTexture) => {
-		texture.encoding = THREE.LinearEncoding;
-
-		const aspect = texture.image.width / texture.image.height;
-		mesh.scale.x = aspect > 1 ? 1 : 1 / aspect;
-		mesh.scale.y = aspect > 1 ? 1 / aspect : 1;
-
-		mesh.material.map = texture;
-	});
+	await loadImage(IMAGE_OPTIONS.CORNELL_BOX);
 
 	// Scene.
 
@@ -100,6 +99,9 @@ async function init() {
 	// GUI.
 
 	gui = new GUI({ width: 250 });
+	gui.add(params, 'image', Object.keys(IMAGE_OPTIONS)).onChange(() => {
+		loadImage(IMAGE_OPTIONS[params.image]);
+	});
 	gui.add(params, 'view', Object.keys(VIEW_OPTIONS)).onChange(() => {
 		filmicPass.view = VIEW_OPTIONS[params.view];
 		filmicPass.recompile();
@@ -114,6 +116,23 @@ async function init() {
 		.onChange(() => {
 			filmicPass.exposure = params.exposure;
 		});
+}
+
+async function loadImage(imageURL: string) {
+	const texture = (await exrLoader.loadAsync(imageURL)) as THREE.DataTexture;
+
+	texture.encoding = THREE.LinearEncoding;
+
+	const aspect = texture.image.width / texture.image.height;
+	mesh.scale.x = aspect > 1 ? 1 : 1 / aspect;
+	mesh.scale.y = aspect > 1 ? 1 / aspect : 1;
+
+	// TODO: cache
+	if (mesh.material.map) {
+		mesh.material.map.dispose();
+	}
+
+	mesh.material.map = texture;
 }
 
 //
