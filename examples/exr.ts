@@ -1,12 +1,13 @@
 import * as THREE from 'three';
 import { EXRLoader } from 'three/examples/jsm/loaders/EXRLoader.js';
+import { KTX2Loader } from 'three/examples/jsm/loaders/KTX2Loader.js';
 import { GUI } from 'lil-gui';
-import { EffectComposer, LUTCubeLoader, RenderPass } from 'postprocessing';
-import { FilmicPass, View, Look, LUT1DCubeLoader } from 'three-filmic';
+import { EffectComposer, RenderPass, LookupTexture } from 'postprocessing';
+import { FilmicPass, View, Look } from 'three-filmic';
+import { DataTexture } from 'three';
 
 const exrLoader = new EXRLoader();
-const lut3DLoader = new LUTCubeLoader();
-const lut1DLoader = new LUT1DCubeLoader();
+const ktx2Loader = new KTX2Loader();
 
 const IMAGE_OPTIONS: Record<string, string> = {
 	CORNELL_BOX: '/reference/cornell_box.exr',
@@ -22,13 +23,13 @@ const VIEW_OPTIONS: Record<keyof View, View> = {
 };
 
 const LOOK_OPTIONS: Record<keyof Look, string> = {
-	VERY_HIGH_CONTRAST: '/luts/Filmic_to_1.20_1-00.cube',
-	HIGH_CONTRAST: '/luts/Filmic_to_0.99_1-0075.cube',
-	MEDIUM_HIGH_CONTRAST: '/luts/Filmic_to_0-85_1-011.cube',
-	MEDIUM_CONTRAST: '/luts/Filmic_to_0-70_1-03.cube',
-	MEDIUM_LOW_CONTRAST: '/luts/Filmic_to_0-60_1-04.cube',
-	LOW_CONTRAST: '/luts/Filmic_to_0-48_1-09.cube',
-	VERY_LOW_CONTRAST: '/luts/Filmic_to_0-35_1-30.cube',
+	VERY_HIGH_CONTRAST: '/luts/Filmic_to_1.20_1-00.ktx2',
+	HIGH_CONTRAST: '/luts/Filmic_to_0.99_1-0075.ktx2',
+	MEDIUM_HIGH_CONTRAST: '/luts/Filmic_to_0-85_1-011.ktx2',
+	MEDIUM_CONTRAST: '/luts/Filmic_to_0-70_1-03.ktx2',
+	MEDIUM_LOW_CONTRAST: '/luts/Filmic_to_0-60_1-04.ktx2',
+	LOW_CONTRAST: '/luts/Filmic_to_0-48_1-09.ktx2',
+	VERY_LOW_CONTRAST: '/luts/Filmic_to_0-35_1-30.ktx2',
 };
 
 const params = {
@@ -77,6 +78,8 @@ async function init() {
 	const size = Math.min(window.innerWidth, CANVAS_SIZE);
 	renderer.setSize(size, size);
 
+	ktx2Loader.detectSupport(renderer);
+
 	renderer.domElement.style.alignSelf = 'center';
 	document.body.appendChild(renderer.domElement);
 
@@ -84,11 +87,15 @@ async function init() {
 
 	filmicPass = new FilmicPass(camera);
 	filmicPass.view = View[params.view];
-	filmicPass.filmicLUT = await lut3DLoader.loadAsync('/luts/desat65cube.cube');
+	filmicPass.filmicLUT = LookupTexture.from(await ktx2Loader.loadAsync('/luts/desat65cube.ktx2'));
 	filmicPass.filmicLUT.encoding = THREE.LinearEncoding;
-	filmicPass.falseColorLUT = await lut3DLoader.loadAsync('/luts/Filmic_False_Colour.cube');
+	filmicPass.falseColorLUT = LookupTexture.from(
+		await ktx2Loader.loadAsync('/luts/Filmic_False_Colour.ktx2')
+	);
 	filmicPass.falseColorLUT.encoding = THREE.sRGBEncoding;
-	filmicPass.lookLUT = await lut1DLoader.loadAsync(LOOK_OPTIONS[params.look]);
+	filmicPass.lookLUT = (await ktx2Loader.loadAsync(
+		LOOK_OPTIONS[params.look]
+	)) as unknown as DataTexture;
 	filmicPass.recompile();
 
 	composer = new EffectComposer(renderer, { frameBufferType: THREE.HalfFloatType });
@@ -107,7 +114,9 @@ async function init() {
 		filmicPass.recompile();
 	});
 	gui.add(params, 'look', Object.keys(LOOK_OPTIONS)).onChange(async () => {
-		filmicPass.lookLUT = await lut1DLoader.loadAsync(LOOK_OPTIONS[params.look]);
+		filmicPass.lookLUT = (await ktx2Loader.loadAsync(
+			LOOK_OPTIONS[params.look]
+		)) as unknown as DataTexture;
 		filmicPass.recompile();
 	});
 	gui.add(params, 'exposure')
