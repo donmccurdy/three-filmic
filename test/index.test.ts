@@ -1,9 +1,6 @@
-require('source-map-support').install();
-
-import * as test from 'tape';
-import { FilmicPass } from '../';
+import test from 'ava';
+import { FilmicPass } from 'three-filmic';
 
 test('test', (t) => {
-	t.ok(FilmicPass, 'implement library');
-	t.end();
+	t.truthy(FilmicPass, 'implement library');
 });
