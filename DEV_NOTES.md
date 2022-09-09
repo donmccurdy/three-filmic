@@ -11,5 +11,5 @@ ociobakelut --lut ~/Desktop/filmic-blender-master/looks/Filmic_to_0-70_1-03.spi1
 As of September 2022, the optimal ZSTD level seems to be around 18, reducing filesize about as far as its going to go with higher levels.
 
 ```shell
-ktxsc --zcmp 16 assets/luts/desat65cube.ktx2
+ktxsc --zcmp 18 assets/luts/*.ktx2
 ```
