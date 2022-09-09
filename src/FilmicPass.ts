@@ -7,7 +7,15 @@ import {
 	LUT1DEffect,
 	LUT3DEffect,
 } from 'postprocessing';
-import { View, DEFAULT_VIEW, Allocation, NEUTRAL_LUT_3D, NEUTRAL_LUT_1D, $TODO } from './constants';
+import {
+	View,
+	DEFAULT_VIEW,
+	Allocation,
+	NEUTRAL_LUT_3D,
+	NEUTRAL_LUT_1D,
+	$TODO,
+	FullscreenMaterial,
+} from './constants';
 import { AllocationTransform, ExposureTransform, MatrixTransform } from './effects';
 
 // TODO(docs): API documentation.
@@ -142,7 +150,7 @@ export class FilmicPass extends EffectPass {
 
 		// Look Transforms output to sRGB. When no Look is applied, include the
 		// default output encoding.
-		this.fullscreenMaterial.encodeOutput = this._view === View.NONE;
+		(this.fullscreenMaterial as FullscreenMaterial).encodeOutput = this._view === View.NONE;
 
 		this.setEffects(effects);
 

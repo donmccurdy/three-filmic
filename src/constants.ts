@@ -4,6 +4,7 @@ import {
 	DataTexture,
 	FloatType,
 	LinearFilter,
+	Material,
 	RedFormat,
 	UVMapping,
 } from 'three';
@@ -67,3 +68,7 @@ NEUTRAL_LUT_1D.needsUpdate = true;
 
 export const NEUTRAL_LUT_3D = LookupTexture.createNeutral(8);
 NEUTRAL_LUT_3D.name = 'neutral3D';
+
+export interface FullscreenMaterial extends Material {
+	encodeOutput: boolean;
+}
