@@ -28,7 +28,7 @@
 	},
 	"devDependencies": {
 		"@types/three": "0.152.1",
-		"@typescript-eslint/eslint-plugin": "5.59.11",
+		"@typescript-eslint/eslint-plugin": "5.60.0",
 		"ava": "5.3.1",
 		"c8": "8.0.0",
 		"concurrently": "7.6.0",
