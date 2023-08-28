@@ -27,12 +27,12 @@
 		"three": ">=0.141.0"
 	},
 	"devDependencies": {
-		"@types/three": "0.155.0",
+		"@types/three": "0.155.1",
 		"@typescript-eslint/eslint-plugin": "5.62.0",
 		"ava": "5.3.1",
 		"c8": "8.0.1",
 		"concurrently": "7.6.0",
-		"eslint": "8.47.0",
+		"eslint": "8.48.0",
 		"ktx-parse": "0.6.0",
 		"lil-gui": "0.18.2",
 		"microbundle": "0.15.1",
